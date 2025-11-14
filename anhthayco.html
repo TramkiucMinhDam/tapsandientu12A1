@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thầy cô</title>
+ <audio id="bgMusic" loop autoplay>
+  <source src="nhacnen.mp3" type="audio/mpeg">
+</audio>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column; /* xếp từ trên xuống dưới */
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      position: relative;
+    }
+    h1 {
+      font-size: 3rem;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 50px; /* tạo khoảng cách với mũi tên */
+    }
+    /* --- Mũi tên dưới trang --- */
+    .arrow-down {
+      position: absolute;
+      bottom: 30px; /* cách đáy 30px */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3rem;
+      font-weight: bold;
+      color: #2c3e50;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      line-height: 70px; /* căn giữa ký tự */
+      transition: all 0.3s ease;
+      border: 2px solid #2c3e50; /* viền mặc định */
+    }
+    .arrow-down:hover {
+      background-color: #24c6dc; /* màu nổi bật khi hover */
+      color: #fff; /* chữ trắng */
+      transform: translateX(-50%) scale(1.2); /* phóng to nhẹ */
+      box-shadow: 0 0 15px rgba(36,198,220,0.6); /* ánh sáng nổi bật */
+      border-color: #24c6dc; /* đổi viền khi hover */
+    }
+    /* span giúp căn chính xác ký tự mũi tên */
+    .arrow-down span {
+      display: inline-block;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <h1>Đây là trang chứa ảnh nhân vật</h1>
+  <!-- Mũi tên xuống dưới, dẫn đến trang trắng khác -->
+  <a href="book.html" class="arrow-down"><span>&#8595;</span></a>
+  <script>
+const audio = document.getElementById("bgMusic");
+
+function restoreAudioTime() {
+  const savedTime = localStorage.getItem("bgMusicTime");
+  if (savedTime) {
+    audio.currentTime = parseFloat(savedTime);
+  }
+}
+
+// Khi file nhạc đã load metadata, đặt lại thời gian
+audio.addEventListener("loadedmetadata", restoreAudioTime);
+
+// Khi quay lại từ cache (Back/Forward)
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) {
+    restoreAudioTime();
+    audio.play().catch(()=>{});
+  }
+});
+
+// Phát nhạc, tránh lỗi autoplay trên mobile
+audio.play().catch(() => {});
+
+// Hàm lưu vị trí nhạc
+function saveAudioTime() {
+  localStorage.setItem("bgMusicTime", audio.currentTime);
+}
+
+// Lưu khi rời trang hoặc ẩn trang
+window.addEventListener("beforeunload", saveAudioTime);
+window.addEventListener("pagehide", saveAudioTime);
+
+// Lưu định kỳ 2 giây/lần
+setInterval(saveAudioTime, 2000);
+
+</script>
+</body>
+</html>
