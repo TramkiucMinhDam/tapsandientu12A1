@@ -48,11 +48,13 @@ body {
 
 /* ================== IMAGE PAGES ================== */
 .page img {
+    position: absolute;   /* QUAN TRỌNG */
+    inset: 0;             /* = top:0; left:0; width:100%; height:100% */
     width: 100%;
     height: 100%;
-    object-fit: cover;
-     display: block;
-     position: relative;
+    object-fit: cover;    /* LUÔN ĐÚNG TỈ LỆ */
+    display: block;
+    pointer-events: none; /* không cản lật trang */
 }
 
 /* ================== VIDEO PAGE ================== */
