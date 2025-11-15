@@ -131,10 +131,12 @@ window.addEventListener("beforeunload", () => {
 });
 </script>
 
-<!-- ========== VIDEO CONTROL (FIX SEEKBAR) ========== -->
+<!-- ========== VIDEO CONTROL (FIX SEEKBAR + PAUSE MUSIC) ========== -->
 <script>
 function setupAllVideos() {
     const pages = document.querySelectorAll(".page.video-page");
+    const bgMusic = document.getElementById("bgMusic");
+    const precision = 100;
 
     pages.forEach(page => {
 
@@ -142,28 +144,27 @@ function setupAllVideos() {
 
         const video = page.querySelector("video");
         const seek  = page.querySelector(".seekbar");
-        const precision = 100;   // tăng precision để chạy mượt và chuẩn hơn
         let metadataLoaded = false;
 
-        // ====== Khi video load metadata ======
+        /* ========== LOAD METADATA ========== */
         video.addEventListener("loadedmetadata", () => {
             metadataLoaded = true;
             seek.max = Math.floor(video.duration * precision);
             seek.value = 0;
         });
 
-        // ====== Play/Pause khi click ======
+        /* ========== CLICK TOGGLE PLAY/PAUSE ========== */
         video.addEventListener("click", () => {
             video.paused ? video.play() : video.pause();
         });
 
-        // ====== Seekbar kéo ======
+        /* ========== SEEKBAR DRAG ========== */
         seek.addEventListener("input", () => {
             if (!metadataLoaded) return;
             video.currentTime = seek.value / precision;
         });
 
-        // ====== Vòng cập nhật seekbar ======
+        /* ========== UPDATE SEEKBAR ========== */
         function updateSeek() {
             if (metadataLoaded) {
                 seek.value = Math.floor(video.currentTime * precision);
@@ -172,19 +173,35 @@ function setupAllVideos() {
         }
         updateSeek();
 
-        // Đánh dấu đã setup
+        /* ========== AUTO PAUSE MUSIC WHEN VIDEO PLAYS ========== */
+        video.addEventListener("play", () => {
+            bgMusic.pause();
+        });
+
+        /* ========== AUTO RESUME MUSIC WHEN VIDEO PAUSES ========== */
+        video.addEventListener("pause", () => {
+            bgMusic.play().catch(()=>{});
+        });
+
+        /* ========== AUTO RESUME MUSIC WHEN VIDEO ENDS ========== */
+        video.addEventListener("ended", () => {
+            bgMusic.play().catch(()=>{});
+        });
+
+        /* ========== MARK INITIALIZED ========== */
         page.dataset.inited = "1";
     });
 }
 
-// Gắn khi lật trang
-$(".flipbook").bind("turned", function(event, page) {
+/* ========== TURN.JS PAGE CHANGE ========== */
+$(".flipbook").bind("turned", function() {
     setTimeout(setupAllVideos, 100);
 });
 
-// Lần đầu
+/* ========== INIT FIRST RUN ========== */
 setupAllVideos();
 </script>
+
 
 
 </body>
