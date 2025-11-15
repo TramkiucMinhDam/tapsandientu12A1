@@ -131,59 +131,61 @@ window.addEventListener("beforeunload", () => {
 });
 </script>
 
-<!-- ========== VIDEO CONTROL (FIX TURN.JS) ========== -->
+<!-- ========== VIDEO CONTROL (FIX SEEKBAR) ========== -->
 <script>
 function setupAllVideos() {
     const pages = document.querySelectorAll(".page.video-page");
 
     pages.forEach(page => {
 
-        // Nếu trang đã gắn event rồi thì bỏ qua
         if (page.dataset.inited === "1") return;
 
         const video = page.querySelector("video");
         const seek  = page.querySelector(".seekbar");
-        const precision = 10;
+        const precision = 100;   // tăng precision để chạy mượt và chuẩn hơn
+        let metadataLoaded = false;
 
-        // Khi video load
+        // ====== Khi video load metadata ======
         video.addEventListener("loadedmetadata", () => {
+            metadataLoaded = true;
             seek.max = Math.floor(video.duration * precision);
             seek.value = 0;
         });
 
-        // Click video play/pause
+        // ====== Play/Pause khi click ======
         video.addEventListener("click", () => {
             video.paused ? video.play() : video.pause();
         });
 
-        // Kéo seekbar
+        // ====== Seekbar kéo ======
         seek.addEventListener("input", () => {
+            if (!metadataLoaded) return;
             video.currentTime = seek.value / precision;
-            video.play();
         });
 
-        // Cập nhật seekbar
+        // ====== Vòng cập nhật seekbar ======
         function updateSeek() {
-            if (!video.paused) {
+            if (metadataLoaded) {
                 seek.value = Math.floor(video.currentTime * precision);
             }
             requestAnimationFrame(updateSeek);
         }
         updateSeek();
 
-        // Đánh dấu đã khởi tạo → lần sau turn.js load lại sẽ không bị gắn lặp
+        // Đánh dấu đã setup
         page.dataset.inited = "1";
     });
 }
 
-// Gắn lại video khi lật trang (vì turn.js xoá DOM rồi tạo lại)
+// Gắn khi lật trang
 $(".flipbook").bind("turned", function(event, page) {
-    setTimeout(setupAllVideos, 50);
+    setTimeout(setupAllVideos, 100);
 });
 
-// Chạy lần đầu
+// Lần đầu
 setupAllVideos();
 </script>
+
 
 </body>
 </html>
