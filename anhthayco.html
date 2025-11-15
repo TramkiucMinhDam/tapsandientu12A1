@@ -8,22 +8,22 @@
 </audio>
   <style>
     body {
-      display: flex;
-      flex-direction: column; /* xếp từ trên xuống dưới */
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #fff;
-      position: relative;
-    }
-    h1 {
-      font-size: 3rem;
-      color: #2c3e50;
-      text-align: center;
-      margin-bottom: 50px; /* tạo khoảng cách với mũi tên */
-    }
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+
+  background-image: url("ten-anh-cua-ban.jpg");
+  background-size: cover;      /* bao phủ toàn màn hình */
+  background-position: center; /* căn giữa */
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
     /* --- Mũi tên dưới trang --- */
     .arrow-down {
       position: absolute;
@@ -60,7 +60,6 @@
   </style>
 </head>
 <body>
-  <h1>Đây là trang chứa ảnh nhân vật</h1>
   <!-- Mũi tên xuống dưới, dẫn đến trang trắng khác -->
   <a href="book.html" class="arrow-down"><span>&#8595;</span></a>
   <script>
