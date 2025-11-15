@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-* {
+*{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -13,29 +13,24 @@ body {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background: #ffffff;
+    background: #FFFFFF;
 }
 
-/* ⭐ Flipbook responsive giữ đúng tỉ lệ 1123 × 450 */
+/* ⭐ Flipbook tự co theo màn hình nhưng KHÔNG scale */
 .flipbook {
     width: min(95vw, 1123px);
     height: calc((min(95vw,1123px)) * 450 / 1123);
 }
 
-/* ⭐ Page layout + chống lệch + chống méo */
+/* ⭐ Giữ tỉ lệ từng trang */
 .flipbook .page,
 .flipbook .hard {
     width: 100%;
     height: 100%;
-    position: relative;     /* để ảnh/video absolute */
-    overflow: hidden;        /* tránh tràn khi lật */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-
-    /* chống lỗi 3D khi turn.js lật */
-    backface-visibility: hidden !important;
-    transform: translateZ(0) !important;
 }
 
 /* ================== COVER ================== */
@@ -51,25 +46,24 @@ body {
     font-style: italic;
 }
 
-/* ================== IMAGE PAGE — FULL PAGE FIX ================== */
+/* ================== IMAGE PAGES ================== */
 .page img {
-    position: absolute;
-    inset: 0;                 /* = top:0 left:0 width:100% height:100% */
     width: 100%;
     height: 100%;
-    object-fit: cover;        /* luôn che phủ đủ trang */
-    pointer-events: none;     /* không ngăn lật trang */
+    object-fit: cover;
 }
 
 /* ================== VIDEO PAGE ================== */
+.video-page {
+    position: relative;
+}
+
+/* Video full trang – KHÔNG MẤT */
 .video-ui {
-    position: absolute;
-    inset: 0;                 /* phủ toàn bộ page */
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    background: black;
 }
 
 /* Ẩn controls mặc định */
@@ -77,24 +71,20 @@ video::-webkit-media-controls {
     display: none !important;
 }
 
-/* ================== SEEKBAR ================== */
+/* ================== SEEK BAR ================== */
 .seekbar {
-    position: absolute;
-    bottom: 6px;
-    left: 0;
     width: 100%;
-    height: 8px;
+    height: 6px;
     appearance: none;
     background: #ddd;
     border-radius: 6px;
-    z-index: 50;
+    position: absolute;
+    bottom: 5px;
 }
-
 .seekbar::-webkit-slider-thumb {
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     background: #000;
     border-radius: 50%;
-    cursor: pointer;
 }
