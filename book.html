@@ -26,7 +26,7 @@
     <div><img src="4.jpg"></div>
 
      <div class="page video-page">
-        <video class="video-ui" src="video1.mp4"></video>
+        <video class="video-ui" src="https://archive.org/download/tapsan/60.mp4"></video>
         <input type="range" class="seekbar" value="0">
      </div>
   
@@ -92,7 +92,7 @@
     <div><img src="60.jpg"></div>
   
    <div class="page video-page">
-        <video class="video-ui" src="https://archive.org/download/tapsan/60.mp4"></video>
+        <video class="video-ui" src="video1.mp4"></video>
         <input type="range" class="seekbar" value="0">
      </div>
   
@@ -131,57 +131,44 @@ window.addEventListener("beforeunload", () => {
 });
 </script>
 
+<!-- ========== VIDEO CONTROL ========== -->
 <script>
-function setupVideoPage(pageElement) {
-    if (!pageElement || pageElement.dataset.ready) return;
+function setupAllVideos() {
+    const pages = document.querySelectorAll(".page.video-page");
 
-    const video = pageElement.querySelector("video");
-    const seek  = pageElement.querySelector(".seekbar");
-    const precision = 10;
+    pages.forEach(page => {
+        const video = page.querySelector("video");
+        const seek  = page.querySelector(".seekbar");
+        const precision = 10;
 
-    video.addEventListener("loadedmetadata", () => {
-        seek.max = Math.floor(video.duration * precision);
-        seek.value = 0;
+        // Khi video load
+        video.addEventListener("loadedmetadata", () => {
+            seek.max = Math.floor(video.duration * precision);
+            seek.value = 0;
+        });
+
+        // Click video play/pause
+        video.addEventListener("click", () => {
+            video.paused ? video.play() : video.pause();
+        });
+
+        // Kéo seekbar
+        seek.addEventListener("input", () => {
+            video.currentTime = seek.value / precision;
+            video.play();
+        });
+
+        // Cập nhật seekbar liên tục
+        function loop() {
+            seek.value = Math.floor(video.currentTime * precision);
+            requestAnimationFrame(loop);
+        }
+        loop();
     });
-
-    video.addEventListener("click", () => {
-        video.paused ? video.play() : video.pause();
-    });
-
-    seek.addEventListener("input", () => {
-        video.currentTime = seek.value / precision;
-        video.play();
-    });
-
-    function loop() {
-        seek.value = Math.floor(video.currentTime * precision);
-        requestAnimationFrame(loop);
-    }
-    loop();
-
-    pageElement.dataset.ready = "1";
 }
 
-// Mỗi lần lật trang ⇒ kích hoạt video-page nằm trong *view*
-$(".flipbook").bind("turned", function (event, page) {
-    const view = $(".flipbook").turn("view");
-    view.forEach(pageIndex => {
-        const el = document.querySelector(`.flipbook > div:nth-child(${pageIndex})`);
-        if (el && el.classList.contains("video-page"))
-            setupVideoPage(el);
-    });
-});
-
-// Kiểm tra nếu trang đầu tiên có video
-document.addEventListener("DOMContentLoaded", () => {
-    const videos = document.querySelectorAll(".page.video-page");
-    videos.forEach(el => {
-        if (el.offsetParent !== null)
-            setupVideoPage(el);
-    });
-});
+setupAllVideos();
 </script>
-
 
 </body>
 </html>
