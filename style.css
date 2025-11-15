@@ -18,8 +18,8 @@ body {
 
 /* ⭐ Flipbook tự co theo màn hình nhưng KHÔNG scale */
 .flipbook {
-    width: min(95vw, 1300px);
-    height: calc((min(95vw,1300px)) * 600 / 1300);
+    width: min(110vw, 1300px);
+    height: calc((min(110vw,1300px)) * 600 / 1300);
 }
 
 /* ⭐ Giữ tỉ lệ từng trang */
