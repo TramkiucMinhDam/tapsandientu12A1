@@ -139,68 +139,96 @@ function setupAllVideos() {
     const precision = 100;
 
     pages.forEach(page => {
-
-        if (page.dataset.inited === "1") return;
-
         const video = page.querySelector("video");
         const seek  = page.querySelector(".seekbar");
+
+        if (!video || !seek) return;
+
+        // Nếu đã khởi tạo cho chính element video này thì bỏ qua
+        if (video._inited) return;
+
         let metadataLoaded = false;
 
-        /* ========== LOAD METADATA ========== */
-        video.addEventListener("loadedmetadata", () => {
+        // Hàm xử lý khi metadata sẵn sàng
+        function onMeta() {
             metadataLoaded = true;
-            seek.max = Math.floor(video.duration * precision);
-            seek.value = 0;
-        });
+            // Nếu duration NaN hoặc 0 thì không set
+            if (isFinite(video.duration) && video.duration > 0) {
+                seek.max = Math.floor(video.duration * precision);
+            } else {
+                seek.max = 0;
+            }
+            seek.value = Math.floor(video.currentTime * precision);
+        }
 
-        /* ========== CLICK TOGGLE PLAY/PAUSE ========== */
+        // Thêm listener loadedmetadata
+        video.addEventListener("loadedmetadata", onMeta);
+
+        // Nếu metadata đã load trước khi gắn listener (readyState >= 1), gọi luôn
+        if (video.readyState >= 1 && !metadataLoaded) {
+            onMeta();
+        }
+
+        // Click để toggle play/pause
         video.addEventListener("click", () => {
-            video.paused ? video.play() : video.pause();
+            if (video.paused) video.play();
+            else video.pause();
         });
 
-        /* ========== SEEKBAR DRAG ========== */
+        // Khi user kéo seekbar
         seek.addEventListener("input", () => {
-            if (!metadataLoaded) return;
+            if (!metadataLoaded || seek.max === 0) return;
+            // không auto play ở đây nếu bạn không muốn; ta set time nhưng không bắt phải play
             video.currentTime = seek.value / precision;
         });
 
-        /* ========== UPDATE SEEKBAR ========== */
+        // Cập nhật seekbar liên tục (chỉ đọc giá trị nếu metadataLoaded)
         function updateSeek() {
-            if (metadataLoaded) {
+            if (metadataLoaded && seek.max > 0) {
+                // tránh set khi người dùng đang kéo (bổ sung: có thể detect bằng attribute 'data-user-seek' nếu cần)
                 seek.value = Math.floor(video.currentTime * precision);
             }
             requestAnimationFrame(updateSeek);
         }
         updateSeek();
 
-        /* ========== AUTO PAUSE MUSIC WHEN VIDEO PLAYS ========== */
+        // Pause background music khi video phát
         video.addEventListener("play", () => {
-            bgMusic.pause();
+            try { bgMusic.pause(); } catch(e) {}
         });
 
-        /* ========== AUTO RESUME MUSIC WHEN VIDEO PAUSES ========== */
+        // Resume background music khi video pause hoặc kết thúc
         video.addEventListener("pause", () => {
-            bgMusic.play().catch(()=>{});
+            try { bgMusic.play().catch(()=>{}); } catch(e) {}
         });
-
-        /* ========== AUTO RESUME MUSIC WHEN VIDEO ENDS ========== */
         video.addEventListener("ended", () => {
-            bgMusic.play().catch(()=>{});
+            try { bgMusic.play().catch(()=>{}); } catch(e) {}
         });
 
-        /* ========== MARK INITIALIZED ========== */
-        page.dataset.inited = "1";
+        // Mark as inited để không thêm listener lần nữa cho chính element này
+        video._inited = true;
     });
 }
 
-/* ========== TURN.JS PAGE CHANGE ========== */
-$(".flipbook").bind("turned", function() {
-    setTimeout(setupAllVideos, 100);
+/* Khi lật trang: 
+   - Pause tất cả video để tránh video chạy ẩn
+   - Gọi setup để gắn listener cho các video mới (cloned) */
+$(".flipbook").bind("turning", function(event, page) {
+    // Pause mọi video hiện có
+    document.querySelectorAll(".page.video-page video").forEach(v => {
+        try { v.pause(); } catch(e) {}
+    });
 });
 
-/* ========== INIT FIRST RUN ========== */
+$(".flipbook").bind("turned", function(event, page) {
+    // Chờ DOM của turn.js ổn định rồi setup
+    setTimeout(setupAllVideos, 80);
+});
+
+// Run lần đầu
 setupAllVideos();
 </script>
+
 
 
 
