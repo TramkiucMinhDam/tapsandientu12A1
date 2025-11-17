@@ -24,15 +24,14 @@
   position: relative;
 }
 
-    /* --- Mũi tên dưới trang --- */
-    .arrow-down {
+ .arrow-right {
       position: absolute;
-      bottom: 30px; /* cách đáy 30px */
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 3rem;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%); /* căn giữa dọc */
+      font-size: 3.5rem;
       font-weight: bold;
-      color: #34ebae;
+      color: #2c3e50;
       cursor: pointer;
       text-decoration: none;
       display: flex;
@@ -43,25 +42,23 @@
       border-radius: 50%;
       line-height: 70px; /* căn giữa ký tự */
       transition: all 0.3s ease;
-      border: 2px solid #2c3e50; /* viền mặc định */
     }
-    .arrow-down:hover {
-      background-color: #24c6dc; /* màu nổi bật khi hover */
-      color: #fff; /* chữ trắng */
-      transform: translateX(-50%) scale(1.2); /* phóng to nhẹ */
-      box-shadow: 0 0 15px rgba(36,198,220,0.6); /* ánh sáng nổi bật */
-      border-color: #24c6dc; /* đổi viền khi hover */
+    .arrow-right:hover {
+      background-color: #f9d423;
+      color: #fff;
+      transform: translateY(-50%) scale(1.2);
+      box-shadow: 0 0 15px rgba(249, 212, 35, 0.6);
     }
-    /* span giúp căn chính xác ký tự mũi tên */
-    .arrow-down span {
+    /* Nếu muốn font ký tự chính giữa tuyệt đối, dùng font mono */
+    .arrow-right span {
       display: inline-block;
-      transform: translateY(-1px);
+      transform: translateY(-4px); /* điều chỉnh nhỏ để ký tự nằm giữa */
     }
   </style>
 </head>
 <body>
   <!-- Mũi tên xuống dưới, dẫn đến trang trắng khác -->
-  <a href="book.html" class="arrow-down"><span>&#8595;</span></a>
+  <a href="book.html" class="arrow-right"><span>&#8595;</span></a>
   <script>
 const audio = document.getElementById("bgMusic");
 
